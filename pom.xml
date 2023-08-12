@@ -97,6 +97,12 @@
             <version>${webjars.webjars-locator.version}</version>
         </dependency>
 
+	<dependency>
+    		<groupId>org.postgresql</groupId>
+    	<artifactId>postgresql</artifactId>
+	</dependency>
+
+
         <!-- Test -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
