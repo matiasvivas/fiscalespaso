@@ -67,6 +67,9 @@ public class VotosController {
             porcentajeJovenFormateado = df.format(porcentajeJoven);
         }
         votos.setPorcentajeJoven(porcentajeJovenFormateado);
+        if(votosPositivos==null){
+            votosPositivos = 0;
+        }
         votos.setPositivos(votosPositivos);
         votos.setPorcentajeNacional(porcentajeNacionalFormateado);
         model.addAttribute("votos",votos);
