@@ -17,18 +17,10 @@ import pl.codeleak.demos.sbt.model.Role;
 import pl.codeleak.demos.sbt.model.User;
 
 @Service
-public class MyUserDetailsService implements UserDetailsService {
+public class MyUserDetailsService {
 
     @Autowired
     private UserService userService;
-
-    @Override
-    @Transactional
-    public UserDetails loadUserByUsername(String userName) {
-        User user = userService.findUserByUserName(userName);
-        List<GrantedAuthority> authorities = getUserAuthority(user.getRoles());
-        return buildUserForAuthentication(user, authorities);
-    }
 
     private List<GrantedAuthority> getUserAuthority(Set<Role> userRoles) {
         Set<GrantedAuthority> roles = new HashSet<>();
