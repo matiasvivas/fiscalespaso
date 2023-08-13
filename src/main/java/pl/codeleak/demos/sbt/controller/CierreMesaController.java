@@ -117,7 +117,12 @@ public class CierreMesaController {
             }
         }
 
-        codigosRepository.save(cierremesa);
+        try {
+            codigosRepository.save(cierremesa);
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
         redirectAttrs
             .addFlashAttribute("mensaje", "Agregado correctamente")
             .addFlashAttribute("clase", "success");
