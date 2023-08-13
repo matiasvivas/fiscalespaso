@@ -58,7 +58,7 @@ public class VotosController {
         Integer votantesNacional = 35815436;
         Integer votantesJovenes = 9133475; //entre 16 y 29 años 2021
         votosPositivos = codigosRepository.obtenerTotalVotosPositivos();
-        if(votosPositivos>0){
+        if(votosPositivos!=null&&votosPositivos>0){
             porcentajeNacional = ((double) votosPositivos * 100) / votantesNacional;
             porcentajeJoven = ((double) votosPositivos * 100) / votantesJovenes;
 
