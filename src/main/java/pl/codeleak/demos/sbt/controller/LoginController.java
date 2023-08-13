@@ -53,11 +53,11 @@ public class LoginController {
         if (bindingResult.hasErrors()) {
             modelAndView.setViewName("registration");
         } else {
-            /*user.setActive(true);
+            user.setActive(true);
             Role rolFiscal = new Role(987876,"FISCAL");
             Set listaRoles = new HashSet<>();
             listaRoles.add(rolFiscal);
-            user.setRoles(listaRoles);*/
+            user.setRoles(listaRoles);
             userService.saveUser(user);
             modelAndView.addObject("successMessage", "El usuario ha sido registrado exitosamente!");
             modelAndView.addObject("user", new User());
