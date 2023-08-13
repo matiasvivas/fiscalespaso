@@ -24,6 +24,7 @@ public class CierreMesa {
     private Integer numeroSeccion;
 
     private Integer numeroMesa;
+    private String observaciones;
     private Integer cantidadVotosLibertadAvanza;
     private String username;
     @Temporal(TemporalType.TIMESTAMP)
@@ -31,13 +32,14 @@ public class CierreMesa {
     public CierreMesa() {
     }
 
-    public CierreMesa(Integer id, String fotoBase64, Distritos distrito, Integer numeroCircuito, Integer numeroSeccion, Integer numeroMesa, Integer cantidadVotosLibertadAvanza, String username, Date fechaHoraCierre) {
+    public CierreMesa(Integer id, String fotoBase64, Distritos distrito, Integer numeroCircuito, Integer numeroSeccion, Integer numeroMesa, String observaciones, Integer cantidadVotosLibertadAvanza, String username, Date fechaHoraCierre) {
         this.id = id;
         this.fotoBase64 = fotoBase64;
         this.distrito = distrito;
         this.numeroCircuito = numeroCircuito;
         this.numeroSeccion = numeroSeccion;
         this.numeroMesa = numeroMesa;
+        this.observaciones = observaciones;
         this.cantidadVotosLibertadAvanza = cantidadVotosLibertadAvanza;
         this.username = username;
         this.fechaHoraCierre = fechaHoraCierre;
@@ -89,6 +91,14 @@ public class CierreMesa {
 
     public void setNumeroMesa(Integer numeroMesa) {
         this.numeroMesa = numeroMesa;
+    }
+
+    public String getObservaciones() {
+        return observaciones;
+    }
+
+    public void setObservaciones(String observaciones) {
+        this.observaciones = observaciones;
     }
 
     public Integer getCantidadVotosLibertadAvanza() {
