@@ -34,6 +34,7 @@ public class CierreMesaController {
     @GetMapping(value = "/")
     public ModelAndView cargadorInicial(Model model) {
 
+        model.addAttribute("distritos", Distritos.values());
         model.addAttribute("cierremesa", new CierreMesa());
 
         ModelAndView modelAndView = new ModelAndView();
