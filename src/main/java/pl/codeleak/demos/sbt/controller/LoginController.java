@@ -44,19 +44,17 @@ public class LoginController {
     @PostMapping(value = "/registration")
     public ModelAndView createNewUser(@Valid User user, BindingResult bindingResult) {
         ModelAndView modelAndView = new ModelAndView();
-        if(user!=null) {
-            User userExists = userService.findUserByUserName(user.getUserName());
-            if (userExists != null) {
-                bindingResult
-                        .rejectValue("userName", "error.user",
-                                "No es posible elegir este nombre de usuario. Elija otro por favor.");
-            }
+        User userExists = userService.findUserByUserName(user.getUserName());
+        if (userExists != null) {
+            bindingResult
+                    .rejectValue("userName", "error.user",
+                            "No es posible elegir este nombre de usuario. Elija otro por favor.");
         }
         if (bindingResult.hasErrors()) {
             modelAndView.setViewName("registration");
         } else {
             user.setActive(true);
-            Role rolFiscal = new Role(987876, "FISCAL");
+            Role rolFiscal = new Role(987876,"FISCAL");
             Set listaRoles = new HashSet<>();
             listaRoles.add(rolFiscal);
             user.setRoles(listaRoles);
@@ -64,6 +62,7 @@ public class LoginController {
             modelAndView.addObject("successMessage", "El usuario ha sido registrado exitosamente!");
             modelAndView.addObject("user", new User());
             modelAndView.setViewName("registration");
+
         }
         return modelAndView;
     }
