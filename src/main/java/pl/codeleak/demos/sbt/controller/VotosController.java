@@ -20,6 +20,7 @@ import pl.codeleak.demos.sbt.service.UserService;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.Base64;
 import java.util.Date;
 
@@ -48,6 +49,9 @@ public class VotosController {
         model.addAttribute("role", role);
 
         Votos votos = new Votos();
+
+        String porcentajeNacionalFormateado = "0.00";
+        String porcentajeJovenFormateado = "0.00";
         Integer votosPositivos = 0;
         double porcentajeJoven = 0;
         double porcentajeNacional = 0;
@@ -56,11 +60,15 @@ public class VotosController {
         votosPositivos = codigosRepository.obtenerTotalVotosPositivos();
         if(votosPositivos>0){
             porcentajeNacional = ((double) votosPositivos * 100) / votantesNacional;
-            porcentajeJoven = ((double)votosPositivos*100)/votantesJovenes;
+            porcentajeJoven = ((double) votosPositivos * 100) / votantesJovenes;
+
+            DecimalFormat df = new DecimalFormat("#.00"); // Formato para dos decimales
+            porcentajeNacionalFormateado = df.format(porcentajeNacional);
+            porcentajeJovenFormateado = df.format(porcentajeJoven);
         }
-        votos.setPorcentajeJoven(porcentajeJoven);
+        votos.setPorcentajeJoven(porcentajeJovenFormateado);
         votos.setPositivos(votosPositivos);
-        votos.setPorcentajeNacional(porcentajeNacional);
+        votos.setPorcentajeNacional(porcentajeNacionalFormateado);
         model.addAttribute("votos",votos);
         modelAndView.setViewName("visor/votos");
         return modelAndView;
