@@ -49,14 +49,14 @@ public class VotosController {
 
         Votos votos = new Votos();
         Integer votosPositivos = 0;
-        Integer porcentajeJoven = 0;
-        Integer porcentajeNacional = 0;
+        double porcentajeJoven = 0;
+        double porcentajeNacional = 0;
         Integer votantesNacional = 35815436;
         Integer votantesJovenes = 9133475; //entre 16 y 29 años 2021
         votosPositivos = codigosRepository.obtenerTotalVotosPositivos();
         if(votosPositivos>0){
-            porcentajeNacional = (votosPositivos*100)/votantesNacional;
-            porcentajeJoven = (votosPositivos*100)/votantesJovenes;
+            porcentajeNacional = ((double) votosPositivos * 100) / votantesNacional;
+            porcentajeJoven = ((double)votosPositivos*100)/votantesJovenes;
         }
         votos.setPorcentajeJoven(porcentajeJoven);
         votos.setPositivos(votosPositivos);

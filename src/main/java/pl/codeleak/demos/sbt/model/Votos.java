@@ -3,13 +3,13 @@ package pl.codeleak.demos.sbt.model;
 public class Votos {
 
     private Integer positivos;
-    private Integer porcentajeJoven;
-    private Integer porcentajeNacional;
+    private double porcentajeJoven;
+    private double porcentajeNacional;
 
     public Votos() {
     }
 
-    public Votos(Integer positivos, Integer porcentajeJoven, Integer porcentajeNacional) {
+    public Votos(Integer positivos, double porcentajeJoven, double porcentajeNacional) {
         this.positivos = positivos;
         this.porcentajeJoven = porcentajeJoven;
         this.porcentajeNacional = porcentajeNacional;
@@ -23,19 +23,19 @@ public class Votos {
         this.positivos = positivos;
     }
 
-    public Integer getPorcentajeJoven() {
+    public double getPorcentajeJoven() {
         return porcentajeJoven;
     }
 
-    public void setPorcentajeJoven(Integer porcentajeJoven) {
+    public void setPorcentajeJoven(double porcentajeJoven) {
         this.porcentajeJoven = porcentajeJoven;
     }
 
-    public Integer getPorcentajeNacional() {
+    public double getPorcentajeNacional() {
         return porcentajeNacional;
     }
 
-    public void setPorcentajeNacional(Integer porcentajeNacional) {
+    public void setPorcentajeNacional(double porcentajeNacional) {
         this.porcentajeNacional = porcentajeNacional;
     }
 }
