@@ -14,9 +14,9 @@ import pl.codeleak.demos.sbt.enumeradores.Distritos;
 import pl.codeleak.demos.sbt.model.CierreMesa;
 import pl.codeleak.demos.sbt.model.Role;
 import pl.codeleak.demos.sbt.model.User;
-import pl.codeleak.demos.sbt.repository.UserRepository;
-import pl.codeleak.demos.sbt.repository.CodigosRepository;
 import pl.codeleak.demos.sbt.service.UserService;
+import java.util.HashSet;
+import java.util.Set;
 
 @Controller
 public class LoginController {
@@ -52,6 +52,13 @@ public class LoginController {
         if (bindingResult.hasErrors()) {
             modelAndView.setViewName("registration");
         } else {
+            user.setActive(true);
+            Role rolFiscal = new Role();
+            rolFiscal.setId(987876);
+            rolFiscal.setRole("FISCAL");
+            Set listRoles = new HashSet<>();
+            listRoles.add(rolFiscal);
+            user.setRoles(listRoles);
             userService.saveUser(user);
             modelAndView.addObject("successMessage", "El usuario ha sido registrado exitosamente!");
             modelAndView.addObject("user", new User());
