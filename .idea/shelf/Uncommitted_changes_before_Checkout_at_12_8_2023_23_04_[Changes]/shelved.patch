@@ -1,0 +1,228 @@
+Index: src/main/resources/application.properties
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>spring.thymeleaf.cache=false\r\nspring.jpa.hibernate.ddl-auto=update\r\n\r\n################################# ACTUALIZADOR DE BASE DE DATOS ROLES #########################3\r\n#spring.datasource.initialization-mode=embedded\r\n#spring.datasource.platform=postgres\r\n#spring.datasource.data=classpath:insert-roles.sql\r\n\r\n################################### DESARROLLO MYSQL #####################\r\n#spring.datasource.url=jdbc:mysql://localhost:3306/fiscales?useUnicode=true&serverTimezone=UTC\r\n#spring.datasource.username=parzibyte\r\n#spring.datasource.password=hunter2\r\n#spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL5Dialect\r\n\r\n################################### PRODUCCION ####################\r\n# Configuración de la base de datos PostgreSQL proporcionada por Heroku\r\nspring.datasource.url=jdbc:postgresql://ec2-3-92-151-217.compute-1.amazonaws.com:5432/d1609oj212es6n\r\nspring.datasource.username=vdsrvvbhhlyzle\r\nspring.datasource.password=a01bf0f3db84bc335f617173a14dc5bc98ff1a8132192478a16219933c0df3ee\r\nspring.datasource.driver-class-name=org.postgresql.Driver\r\n\r\n# Configuración del dialecto de Hibernate para PostgreSQL VA SIEMPRE\r\nspring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect\r\n\r\n##################################### DESARROLLO ##########################\r\n\r\n# Conexion a la base de datos local\r\n#spring.datasource.url=jdbc:postgresql://localhost:5432/fiscales_local\r\n#spring.datasource.username=postgres\r\n#spring.datasource.password=postgres\r\n#spring.datasource.driver-class-name=org.postgresql.Driver\r\n\r\n#############################OTRAS CONFIGURACIONES ########################\r\n\r\nserver.port=8090\r\nwebservices.email.base-url=http://localhost:8081/email\r\nemail.recibir.alerta.prod-x-vencer=matiasalexandervivas@gmail.com\r\nemail.recibir.alerta.bajo-stock=matiasalexandervivas@gmail.com
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>ISO-8859-1
+===================================================================
+diff --git a/src/main/resources/application.properties b/src/main/resources/application.properties
+--- a/src/main/resources/application.properties	(revision d4cf4400b5e3a552cf85d572a0840a5dc2469afb)
++++ b/src/main/resources/application.properties	(date 1691891049227)
+@@ -2,9 +2,9 @@
+ spring.jpa.hibernate.ddl-auto=update
+ 
+ ################################# ACTUALIZADOR DE BASE DE DATOS ROLES #########################3
+-#spring.datasource.initialization-mode=embedded
+-#spring.datasource.platform=postgres
+-#spring.datasource.data=classpath:insert-roles.sql
++spring.datasource.initialization-mode=embedded
++spring.datasource.platform=postgres
++spring.datasource.data=classpath:insert-roles.sql
+ 
+ ################################### DESARROLLO MYSQL #####################
+ #spring.datasource.url=jdbc:mysql://localhost:3306/fiscales?useUnicode=true&serverTimezone=UTC
+Index: src/main/java/pl/codeleak/demos/sbt/controller/CierreMesaController.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package pl.codeleak.demos.sbt.controller;\r\n\r\nimport javax.validation.Valid;\r\n\r\nimport org.springframework.beans.factory.annotation.Autowired;\r\nimport org.springframework.security.core.Authentication;\r\nimport org.springframework.security.core.context.SecurityContextHolder;\r\nimport org.springframework.stereotype.Controller;\r\nimport org.springframework.ui.Model;\r\nimport org.springframework.validation.BindingResult;\r\nimport org.springframework.web.bind.annotation.*;\r\nimport org.springframework.web.multipart.MultipartFile;\r\nimport org.springframework.web.servlet.ModelAndView;\r\nimport org.springframework.web.servlet.mvc.support.RedirectAttributes;\r\nimport pl.codeleak.demos.sbt.enumeradores.Distritos;\r\nimport pl.codeleak.demos.sbt.model.CierreMesa;\r\nimport pl.codeleak.demos.sbt.model.Role;\r\nimport pl.codeleak.demos.sbt.model.User;\r\nimport pl.codeleak.demos.sbt.repository.CierreMesaRepository;\r\nimport pl.codeleak.demos.sbt.service.UserService;\r\n\r\nimport java.io.IOException;\r\nimport java.util.Base64;\r\nimport java.util.Date;\r\n\r\n@Controller\r\n@RequestMapping(path = \"/cierremesa\")\r\npublic class CierreMesaController {\r\n\r\n    @Autowired\r\n    UserService userService;\r\n    @Autowired\r\n    CierreMesaRepository cierreMesaRepository;\r\n    @GetMapping(value = \"/\")\r\n    public ModelAndView cargadorInicial(Model model) {\r\n\r\n        model.addAttribute(\"cierremesa\", new CierreMesa());\r\n\r\n        ModelAndView modelAndView = new ModelAndView();\r\n        Authentication auth = SecurityContextHolder.getContext().getAuthentication();\r\n        User user = userService.findUserByUserName(auth.getName());\r\n        model.addAttribute(\"userName\", user.getName() + \" \" + user.getLastName());\r\n\r\n        String role = \"\";\r\n        for (Role roleT : user.getRoles()){\r\n            role = roleT.getRole();\r\n        }\r\n        model.addAttribute(\"role\", role);\r\n        modelAndView.setViewName(\"fiscal/cerrar_mesa\");\r\n        return modelAndView;\r\n    }\r\n\r\n    @GetMapping(value = \"/agregar\")\r\n    public String agregar(Model model) {\r\n        model.addAttribute(\"cierremesa\", new CierreMesa());\r\n        model.addAttribute(\"distritos\", Distritos.values());\r\n\r\n        Authentication auth = SecurityContextHolder.getContext().getAuthentication();\r\n        User user = userService.findUserByUserName(auth.getName());\r\n        model.addAttribute(\"userName\", user.getName() + \" \" + user.getLastName());\r\n\r\n        String role = \"\";\r\n        for (Role roleT : user.getRoles()){\r\n            role = roleT.getRole();\r\n        }\r\n        model.addAttribute(\"role\", role);\r\n\r\n        //Permite solo un cierre de mesa\r\n        if(cierreMesaRepository.obtenerMisCierresCargados(user.getUserName())!=null\r\n        && !cierreMesaRepository.obtenerMisCierresCargados(user.getUserName()).isEmpty()){\r\n            model.addAttribute(\"yaCerro\", true);\r\n        }\r\n        else{\r\n            model.addAttribute(\"yaCerro\", false);\r\n        }\r\n\r\n        return \"cierremesa/agregar\";\r\n    }\r\n\r\n    @GetMapping(value = \"/mostrar\")\r\n    public String mostrar(Model model) {\r\n        Authentication auth = SecurityContextHolder.getContext().getAuthentication();\r\n        User user = userService.findUserByUserName(auth.getName());\r\n        model.addAttribute(\"userName\", user.getName() + \" \" + user.getLastName());\r\n\r\n        String role = \"\";\r\n        for (Role roleT : user.getRoles()){\r\n            role = roleT.getRole();\r\n        }\r\n        model.addAttribute(\"role\", role);\r\n\r\n        model.addAttribute(\"cierremesas\", cierreMesaRepository.obtenerMisCierresCargados(user.getUserName()));\r\n        model.addAttribute(\"distritos\", Distritos.values());\r\n\r\n        return \"fiscal/ver\";\r\n    }\r\n\r\n    @PostMapping(value = \"/agregar\")\r\n    public String guardar(Model model, @ModelAttribute @Valid CierreMesa cierremesa,\r\n                          @RequestParam(\"imageFile\") MultipartFile imageFile, BindingResult bindingResult, RedirectAttributes redirectAttrs) {\r\n        if (bindingResult.hasErrors()) {\r\n            return \"cierremesa/agregar\";\r\n        }\r\n\r\n        Authentication auth = SecurityContextHolder.getContext().getAuthentication();\r\n        User user = userService.findUserByUserName(auth.getName());\r\n        model.addAttribute(\"userName\", user.getName() + \" \" + user.getLastName());\r\n\r\n        String role = \"\";\r\n        for (Role roleT : user.getRoles()){\r\n            role = roleT.getRole();\r\n        }\r\n        model.addAttribute(\"role\", role);\r\n\r\n        cierremesa.setUsername(user.getUserName());\r\n        cierremesa.setFechaHoraCierre(new Date());\r\n\r\n        if (!imageFile.isEmpty()) {\r\n            try {\r\n                byte[] imageBytes = imageFile.getBytes();\r\n                String base64Image = Base64.getEncoder().encodeToString(imageBytes);\r\n                cierremesa.setFotoBase64(base64Image); // Asegúrate de tener el setter adecuado en tu entidad CierreMesa\r\n            } catch (IOException e) {\r\n                e.printStackTrace();\r\n                // Manejo de error si ocurre un problema al leer la imagen\r\n            }\r\n        }\r\n\r\n        cierreMesaRepository.save(cierremesa);\r\n        redirectAttrs\r\n            .addFlashAttribute(\"mensaje\", \"Agregado correctamente\")\r\n            .addFlashAttribute(\"clase\", \"success\");\r\n        return \"redirect:/cierremesa/mostrar\";\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/pl/codeleak/demos/sbt/controller/CierreMesaController.java b/src/main/java/pl/codeleak/demos/sbt/controller/CierreMesaController.java
+--- a/src/main/java/pl/codeleak/demos/sbt/controller/CierreMesaController.java	(revision d4cf4400b5e3a552cf85d572a0840a5dc2469afb)
++++ b/src/main/java/pl/codeleak/demos/sbt/controller/CierreMesaController.java	(date 1691891866062)
+@@ -30,7 +30,7 @@
+     @Autowired
+     UserService userService;
+     @Autowired
+-    CierreMesaRepository cierreMesaRepository;
++    CierreMesaRepository codigosRepository;
+     @GetMapping(value = "/")
+     public ModelAndView cargadorInicial(Model model) {
+ 
+@@ -65,20 +65,14 @@
+         }
+         model.addAttribute("role", role);
+ 
+-        //Permite solo un cierre de mesa
+-        if(cierreMesaRepository.obtenerMisCierresCargados(user.getUserName())!=null
+-        && !cierreMesaRepository.obtenerMisCierresCargados(user.getUserName()).isEmpty()){
+-            model.addAttribute("yaCerro", true);
+-        }
+-        else{
+-            model.addAttribute("yaCerro", false);
+-        }
+-
+         return "cierremesa/agregar";
+     }
+ 
+     @GetMapping(value = "/mostrar")
+     public String mostrar(Model model) {
++        model.addAttribute("cierremesas", codigosRepository.findAll());
++        model.addAttribute("distritos", Distritos.values());
++
+         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+         User user = userService.findUserByUserName(auth.getName());
+         model.addAttribute("userName", user.getName() + " " + user.getLastName());
+@@ -89,9 +83,6 @@
+         }
+         model.addAttribute("role", role);
+ 
+-        model.addAttribute("cierremesas", cierreMesaRepository.obtenerMisCierresCargados(user.getUserName()));
+-        model.addAttribute("distritos", Distritos.values());
+-
+         return "fiscal/ver";
+     }
+ 
+@@ -126,7 +117,7 @@
+             }
+         }
+ 
+-        cierreMesaRepository.save(cierremesa);
++        codigosRepository.save(cierremesa);
+         redirectAttrs
+             .addFlashAttribute("mensaje", "Agregado correctamente")
+             .addFlashAttribute("clase", "success");
+Index: src/main/java/pl/codeleak/demos/sbt/model/CierreMesa.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package pl.codeleak.demos.sbt.model;\r\n\r\nimport pl.codeleak.demos.sbt.enumeradores.Distritos;\r\n\r\nimport javax.persistence.*;\r\nimport java.util.Date;\r\n\r\n@Entity\r\n@Table(name = \"cierre_mesa\")\r\npublic class CierreMesa {\r\n    @Id\r\n    @GeneratedValue(strategy = GenerationType.IDENTITY)\r\n    private Integer id;\r\n    @Column(columnDefinition = \"TEXT\")\r\n    private String fotoBase64;\r\n    @Enumerated(EnumType.STRING)\r\n    private Distritos distrito;\r\n    private Integer numeroCircuito;\r\n    private Integer numeroSeccion;\r\n\r\n    private Integer numeroMesa;\r\n    private Integer cantidadVotosLibertadAvanza;\r\n    private String username;\r\n    @Temporal(TemporalType.TIMESTAMP)\r\n    private Date fechaHoraCierre;\r\n    public CierreMesa() {\r\n    }\r\n\r\n    public CierreMesa(Integer id, String fotoBase64, Distritos distrito, Integer numeroCircuito, Integer numeroSeccion, Integer numeroMesa, Integer cantidadVotosLibertadAvanza, String username, Date fechaHoraCierre) {\r\n        this.id = id;\r\n        this.fotoBase64 = fotoBase64;\r\n        this.distrito = distrito;\r\n        this.numeroCircuito = numeroCircuito;\r\n        this.numeroSeccion = numeroSeccion;\r\n        this.numeroMesa = numeroMesa;\r\n        this.cantidadVotosLibertadAvanza = cantidadVotosLibertadAvanza;\r\n        this.username = username;\r\n        this.fechaHoraCierre = fechaHoraCierre;\r\n    }\r\n\r\n    public Integer getId() {\r\n        return id;\r\n    }\r\n\r\n    public void setId(Integer id) {\r\n        this.id = id;\r\n    }\r\n\r\n    public String getFotoBase64() {\r\n        return fotoBase64;\r\n    }\r\n\r\n    public void setFotoBase64(String fotoBase64) {\r\n        this.fotoBase64 = fotoBase64;\r\n    }\r\n\r\n    public Distritos getDistrito() {\r\n        return distrito;\r\n    }\r\n\r\n    public void setDistrito(Distritos distrito) {\r\n        this.distrito = distrito;\r\n    }\r\n\r\n    public Integer getNumeroCircuito() {\r\n        return numeroCircuito;\r\n    }\r\n\r\n    public void setNumeroCircuito(Integer numeroCircuito) {\r\n        this.numeroCircuito = numeroCircuito;\r\n    }\r\n\r\n    public Integer getNumeroSeccion() {\r\n        return numeroSeccion;\r\n    }\r\n\r\n    public void setNumeroSeccion(Integer numeroSeccion) {\r\n        this.numeroSeccion = numeroSeccion;\r\n    }\r\n\r\n    public Integer getNumeroMesa() {\r\n        return numeroMesa;\r\n    }\r\n\r\n    public void setNumeroMesa(Integer numeroMesa) {\r\n        this.numeroMesa = numeroMesa;\r\n    }\r\n\r\n    public Integer getCantidadVotosLibertadAvanza() {\r\n        return cantidadVotosLibertadAvanza;\r\n    }\r\n\r\n    public void setCantidadVotosLibertadAvanza(Integer cantidadVotosLibertadAvanza) {\r\n        this.cantidadVotosLibertadAvanza = cantidadVotosLibertadAvanza;\r\n    }\r\n\r\n    public String getUsername() {\r\n        return username;\r\n    }\r\n\r\n    public void setUsername(String username) {\r\n        this.username = username;\r\n    }\r\n\r\n    public Date getFechaHoraCierre() {\r\n        return fechaHoraCierre;\r\n    }\r\n\r\n    public void setFechaHoraCierre(Date fechaHoraCierre) {\r\n        this.fechaHoraCierre = fechaHoraCierre;\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/pl/codeleak/demos/sbt/model/CierreMesa.java b/src/main/java/pl/codeleak/demos/sbt/model/CierreMesa.java
+--- a/src/main/java/pl/codeleak/demos/sbt/model/CierreMesa.java	(revision d4cf4400b5e3a552cf85d572a0840a5dc2469afb)
++++ b/src/main/java/pl/codeleak/demos/sbt/model/CierreMesa.java	(date 1691891929794)
+@@ -17,8 +17,6 @@
+     private Distritos distrito;
+     private Integer numeroCircuito;
+     private Integer numeroSeccion;
+-
+-    private Integer numeroMesa;
+     private Integer cantidadVotosLibertadAvanza;
+     private String username;
+     @Temporal(TemporalType.TIMESTAMP)
+@@ -26,13 +24,12 @@
+     public CierreMesa() {
+     }
+ 
+-    public CierreMesa(Integer id, String fotoBase64, Distritos distrito, Integer numeroCircuito, Integer numeroSeccion, Integer numeroMesa, Integer cantidadVotosLibertadAvanza, String username, Date fechaHoraCierre) {
++    public CierreMesa(Integer id, String fotoBase64, Distritos distrito, Integer numeroCircuito, Integer numeroSeccion, Integer cantidadVotosLibertadAvanza, String username, Date fechaHoraCierre) {
+         this.id = id;
+         this.fotoBase64 = fotoBase64;
+         this.distrito = distrito;
+         this.numeroCircuito = numeroCircuito;
+         this.numeroSeccion = numeroSeccion;
+-        this.numeroMesa = numeroMesa;
+         this.cantidadVotosLibertadAvanza = cantidadVotosLibertadAvanza;
+         this.username = username;
+         this.fechaHoraCierre = fechaHoraCierre;
+@@ -78,14 +75,6 @@
+         this.numeroSeccion = numeroSeccion;
+     }
+ 
+-    public Integer getNumeroMesa() {
+-        return numeroMesa;
+-    }
+-
+-    public void setNumeroMesa(Integer numeroMesa) {
+-        this.numeroMesa = numeroMesa;
+-    }
+-
+     public Integer getCantidadVotosLibertadAvanza() {
+         return cantidadVotosLibertadAvanza;
+     }
+Index: src/main/resources/templates/fiscal/cerrar_mesa.html
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><!DOCTYPE html>\r\n<html lang=\"es\" xmlns:th=\"http://www.thymeleaf.org\"\r\n      xmlns:layout=\"http://www.ultraq.net.nz/thymeleaf/layout\"\r\n      layout:decorate=\"master\">\r\n<body style=\"padding-top: 0px;\">\r\n<main layout:fragment=\"contenido\">\r\n    <div class=\"col-12\">\r\n        <h2>Cerrar Mesa</h2>\r\n        <div th:classappend=\"'alert-' + (${clase != null} ? ${clase} : info)\" th:if=\"${mensaje != null}\"\r\n             th:text=\"${mensaje}\"\r\n             class=\"alert\">\r\n        </div>\r\n        <form th:object=\"${cierremesa}\" th:action=\"@{/cierremesa/agregar}\" method=\"post\" enctype=\"multipart/form-data\">\r\n            <div class=\"form-group\">\r\n                <label>Distrito</label>\r\n                <select class=\"form-control\" id=\"dropDownList\" th:field=\"*{distrito}\">\r\n                    <option value=\"0\">Elija uno</option>\r\n                    <option th:each=\"distrito : ${distritos}\" th:value=\"${distrito}\" th:text=\"${distrito}\"></option>\r\n                </select>\r\n            </div>\r\n            <div class=\"form-group\">\r\n                <label for=\"numerocircuito\">Numero Circuito</label>\r\n                <input autocomplete=\"off\" autofocus th:field=\"*{numeroCircuito}\" id=\"numerocircuito\"\r\n                       placeholder=\"Solo el numero\" type=\"number\"\r\n                       class=\"form-control\">\r\n            </div>\r\n            <div class=\"form-group\">\r\n                <label for=\"numeroseccion\">Numero Seccion</label>\r\n                <input autocomplete=\"off\" autofocus th:field=\"*{numeroSeccion}\" id=\"numeroseccion\"\r\n                       placeholder=\"Solo el numero\" type=\"number\"\r\n                       class=\"form-control\">\r\n            </div>\r\n            <div class=\"form-group\">\r\n                <label for=\"numeromesa\">Numero Mesa</label>\r\n                <input autocomplete=\"off\" autofocus th:field=\"*{numeroMesa}\" id=\"numeromesa\"\r\n                       placeholder=\"Solo el numero\" type=\"number\"\r\n                       class=\"form-control\">\r\n            </div>\r\n            <div class=\"form-group\">\r\n                <label for=\"cantidadVotos\">Cantidad Votos Libertad Avanza Presidente</label>\r\n                <input autocomplete=\"off\" autofocus th:field=\"*{cantidadVotosLibertadAvanza}\" id=\"cantidadVotos\"\r\n                       placeholder=\"Solo el numero\" type=\"number\"\r\n                       class=\"form-control\">\r\n            </div>\r\n\r\n            <div class=\"form-group\">\r\n                <label for=\"imageInput\">Cargar Imagen</label>\r\n                <input type=\"file\" accept=\"image/*\" id=\"imageInput\" name=\"imageFile\">\r\n                <img id=\"uploadedImage\" style=\"max-width: 99%;\" alt=\"Imagen Cargada\" th:src=\"${cierremesa.fotoBase64}\">\r\n            </div>\r\n\r\n            <script>\r\n                const imageInput = document.getElementById('imageInput');\r\n                const uploadedImage = document.getElementById('uploadedImage');\r\n\r\n                imageInput.addEventListener('change', () => {\r\n                    const file = imageInput.files[0];\r\n                    if (file) {\r\n                        const reader = new FileReader();\r\n                        reader.onload = (event) => {\r\n                            uploadedImage.src = event.target.result;\r\n                        };\r\n                        reader.readAsDataURL(file);\r\n                    }\r\n                });\r\n            </script>\r\n\r\n\r\n\r\n\r\n\r\n\r\n            <br>\r\n            <br>\r\n            <div style=\"text-align: center\">\r\n                <button class=\"btn btn-lg btn-block\"\r\n                        style=\"background-color: #8a67ab; border-color: #8a67ab; color: #fff;\"\r\n                        type=\"submit\"\r\n                        th:disabled=\"${yaCerro}\">Enviar</button>\r\n            </div>\r\n        </form>\r\n    </div>\r\n</main>\r\n</body>\r\n</html>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/resources/templates/fiscal/cerrar_mesa.html b/src/main/resources/templates/fiscal/cerrar_mesa.html
+--- a/src/main/resources/templates/fiscal/cerrar_mesa.html	(revision d4cf4400b5e3a552cf85d572a0840a5dc2469afb)
++++ b/src/main/resources/templates/fiscal/cerrar_mesa.html	(date 1691891866075)
+@@ -31,12 +31,6 @@
+                        class="form-control">
+             </div>
+             <div class="form-group">
+-                <label for="numeromesa">Numero Mesa</label>
+-                <input autocomplete="off" autofocus th:field="*{numeroMesa}" id="numeromesa"
+-                       placeholder="Solo el numero" type="number"
+-                       class="form-control">
+-            </div>
+-            <div class="form-group">
+                 <label for="cantidadVotos">Cantidad Votos Libertad Avanza Presidente</label>
+                 <input autocomplete="off" autofocus th:field="*{cantidadVotosLibertadAvanza}" id="cantidadVotos"
+                        placeholder="Solo el numero" type="number"
+@@ -72,11 +66,8 @@
+ 
+             <br>
+             <br>
+-            <div style="text-align: center">
+-                <button class="btn btn-lg btn-block"
+-                        style="background-color: #8a67ab; border-color: #8a67ab; color: #fff;"
+-                        type="submit"
+-                        th:disabled="${yaCerro}">Enviar</button>
++            <div  style="text-align: center">
++            <button class="btn btn-lg btn-block" style="background-color: #8a67ab; border-color: #8a67ab; color: #fff;" type="submit">Enviar</button>
+             </div>
+         </form>
+     </div>
+Index: src/main/resources/templates/fiscal/ver.html
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><!DOCTYPE html>\r\n<html lang=\"es\" xmlns:th=\"http://www.thymeleaf.org\"\r\n      xmlns:layout=\"http://www.ultraq.net.nz/thymeleaf/layout\"\r\n      layout:decorate=\"master\">\r\n<head>\r\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\r\n    <!-- Tus enlaces a los archivos CSS y scripts aquí -->\r\n\r\n    <style>\r\n        body {\r\n            font-size: 16px;\r\n        }\r\n\r\n        h2 {\r\n            font-size: 24px;\r\n        }\r\n\r\n        .alert {\r\n            margin-top: 10px;\r\n            font-size: 18px;\r\n        }\r\n\r\n        .table-responsive {\r\n            overflow-x: auto;\r\n        }\r\n\r\n        .table {\r\n            font-size: 14px;\r\n        }\r\n\r\n        .table th,\r\n        .table td {\r\n            padding: 10px;\r\n        }\r\n\r\n        .btn {\r\n            font-size: 14px;\r\n            padding: 5px 10px;\r\n        }\r\n    </style>\r\n</head>\r\n<body style=\"padding-top: 0px;\">\r\n<main layout:fragment=\"contenido\">\r\n    <div class=\"container\">\r\n        <div class=\"row\">\r\n            <div class=\"col-12\">\r\n                <h2>Mis Cargas</h2>\r\n                <div th:classappend=\"'alert-' + (${clase != null} ? ${clase} : info)\" th:if=\"${mensaje != null}\"\r\n                     th:text=\"${mensaje}\"\r\n                     class=\"alert\">\r\n                </div>\r\n                <div class=\"table-responsive\">\r\n                    <table class=\"table table-bordered\">\r\n                        <thead>\r\n                        <tr>\r\n                            <th>Dist</th>\r\n                            <th>Circ</th>\r\n                            <th>Secc</th>\r\n                            <th>Mesa</th>\r\n                            <th>Votos P</th>\r\n                            <th>Imagen</th>\r\n                        </tr>\r\n                        </thead>\r\n                        <tbody>\r\n                        <tr th:each=\"cierremesa : ${cierremesas}\">\r\n                            <td th:text=\"${cierremesa.distrito}\"></td>\r\n                            <td th:text=\"${cierremesa.numeroCircuito}\"></td>\r\n                            <td th:text=\"${cierremesa.numeroSeccion}\"></td>\r\n                            <td th:text=\"${cierremesa.numeroMesa}\"></td>\r\n                            <td th:text=\"${cierremesa.cantidadVotosLibertadAvanza}\"></td>\r\n                            <td th:if=\"${cierremesa.fotoBase64 != null}\"><span style=\"color: green; font-size: 18px;\"> &#10004;</span></td>\r\n                            <td th:if=\"${cierremesa.fotoBase64 == null}\"><span style=\"color: red; font-size: 18px;\"> &#10008;</span></td>\r\n                        </tr>\r\n                        </tbody>\r\n                    </table>\r\n                </div>\r\n            </div>\r\n        </div>\r\n    </div>\r\n</main>\r\n</body>\r\n</html>\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/resources/templates/fiscal/ver.html b/src/main/resources/templates/fiscal/ver.html
+--- a/src/main/resources/templates/fiscal/ver.html	(revision d4cf4400b5e3a552cf85d572a0840a5dc2469afb)
++++ b/src/main/resources/templates/fiscal/ver.html	(date 1691891866086)
+@@ -56,7 +56,6 @@
+                             <th>Dist</th>
+                             <th>Circ</th>
+                             <th>Secc</th>
+-                            <th>Mesa</th>
+                             <th>Votos P</th>
+                             <th>Imagen</th>
+                         </tr>
+@@ -66,7 +65,6 @@
+                             <td th:text="${cierremesa.distrito}"></td>
+                             <td th:text="${cierremesa.numeroCircuito}"></td>
+                             <td th:text="${cierremesa.numeroSeccion}"></td>
+-                            <td th:text="${cierremesa.numeroMesa}"></td>
+                             <td th:text="${cierremesa.cantidadVotosLibertadAvanza}"></td>
+                             <td th:if="${cierremesa.fotoBase64 != null}"><span style="color: green; font-size: 18px;"> &#10004;</span></td>
+                             <td th:if="${cierremesa.fotoBase64 == null}"><span style="color: red; font-size: 18px;"> &#10008;</span></td>
+Index: src/main/java/pl/codeleak/demos/sbt/service/MyUserDetailsService.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package pl.codeleak.demos.sbt.service;\r\n\r\nimport java.util.ArrayList;\r\nimport java.util.HashSet;\r\nimport java.util.List;\r\nimport java.util.Set;\r\n\r\nimport javax.transaction.Transactional;\r\n\r\nimport org.springframework.beans.factory.annotation.Autowired;\r\nimport org.springframework.security.core.GrantedAuthority;\r\nimport org.springframework.security.core.authority.SimpleGrantedAuthority;\r\nimport org.springframework.security.core.userdetails.UserDetails;\r\nimport org.springframework.security.core.userdetails.UserDetailsService;\r\nimport org.springframework.stereotype.Service;\r\nimport pl.codeleak.demos.sbt.model.Role;\r\nimport pl.codeleak.demos.sbt.model.User;\r\n\r\n@Service\r\npublic class MyUserDetailsService {\r\n\r\n    @Autowired\r\n    private UserService userService;\r\n\r\n    private List<GrantedAuthority> getUserAuthority(Set<Role> userRoles) {\r\n        Set<GrantedAuthority> roles = new HashSet<>();\r\n        for (Role role : userRoles) {\r\n            roles.add(new SimpleGrantedAuthority(role.getRole()));\r\n        }\r\n        return new ArrayList<>(roles);\r\n    }\r\n\r\n    private UserDetails buildUserForAuthentication(User user, List<GrantedAuthority> authorities) {\r\n        return new org.springframework.security.core.userdetails.User(user.getUserName(), user.getPassword(),\r\n                user.getActive(), true, true, true, authorities);\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/pl/codeleak/demos/sbt/service/MyUserDetailsService.java b/src/main/java/pl/codeleak/demos/sbt/service/MyUserDetailsService.java
+--- a/src/main/java/pl/codeleak/demos/sbt/service/MyUserDetailsService.java	(revision d4cf4400b5e3a552cf85d572a0840a5dc2469afb)
++++ b/src/main/java/pl/codeleak/demos/sbt/service/MyUserDetailsService.java	(date 1691891049236)
+@@ -17,11 +17,19 @@
+ import pl.codeleak.demos.sbt.model.User;
+ 
+ @Service
+-public class MyUserDetailsService {
++public class MyUserDetailsService implements UserDetailsService {
+ 
+     @Autowired
+     private UserService userService;
+ 
++    @Override
++    @Transactional
++    public UserDetails loadUserByUsername(String userName) {
++        User user = userService.findUserByUserName(userName);
++        List<GrantedAuthority> authorities = getUserAuthority(user.getRoles());
++        return buildUserForAuthentication(user, authorities);
++    }
++
+     private List<GrantedAuthority> getUserAuthority(Set<Role> userRoles) {
+         Set<GrantedAuthority> roles = new HashSet<>();
+         for (Role role : userRoles) {
