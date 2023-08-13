@@ -56,6 +56,7 @@
                             <th>Dist</th>
                             <th>Circ</th>
                             <th>Secc</th>
+                            <th>Mesa</th>
                             <th>Votos P</th>
                             <th>Imagen</th>
                         </tr>
@@ -65,6 +66,7 @@
                             <td th:text="${cierremesa.distrito}"></td>
                             <td th:text="${cierremesa.numeroCircuito}"></td>
                             <td th:text="${cierremesa.numeroSeccion}"></td>
+                            <td th:text="${cierremesa.numeroMesa}"></td>
                             <td th:text="${cierremesa.cantidadVotosLibertadAvanza}"></td>
                             <td th:if="${cierremesa.fotoBase64 != null}"><span style="color: green; font-size: 18px;"> &#10004;</span></td>
                             <td th:if="${cierremesa.fotoBase64 == null}"><span style="color: red; font-size: 18px;"> &#10008;</span></td>

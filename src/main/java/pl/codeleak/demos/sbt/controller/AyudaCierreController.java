@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 import pl.codeleak.demos.sbt.model.Role;
 import pl.codeleak.demos.sbt.model.User;
-import pl.codeleak.demos.sbt.repository.CodigosRepository;
+import pl.codeleak.demos.sbt.repository.CierreMesaRepository;
 import pl.codeleak.demos.sbt.service.UserService;
 
 @Controller
@@ -20,7 +20,7 @@ public class AyudaCierreController {
     @Autowired
     UserService userService;
     @Autowired
-    CodigosRepository codigosRepository;
+    CierreMesaRepository codigosRepository;
     @GetMapping(value = "/")
     public ModelAndView cargadorInicial(Model model) {
 

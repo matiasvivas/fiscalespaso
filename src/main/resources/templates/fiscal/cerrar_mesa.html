@@ -31,6 +31,12 @@
                        class="form-control">
             </div>
             <div class="form-group">
+                <label for="numeromesa">Numero Mesa</label>
+                <input autocomplete="off" autofocus th:field="*{numeroMesa}" id="numeromesa"
+                       placeholder="Solo el numero" type="number"
+                       class="form-control">
+            </div>
+            <div class="form-group">
                 <label for="cantidadVotos">Cantidad Votos Libertad Avanza Presidente</label>
                 <input autocomplete="off" autofocus th:field="*{cantidadVotosLibertadAvanza}" id="cantidadVotos"
                        placeholder="Solo el numero" type="number"
@@ -66,8 +72,11 @@
 
             <br>
             <br>
-            <div  style="text-align: center">
-            <button class="btn btn-lg btn-block" style="background-color: #8a67ab; border-color: #8a67ab; color: #fff;" type="submit">Enviar</button>
+            <div style="text-align: center">
+                <button class="btn btn-lg btn-block"
+                        style="background-color: #8a67ab; border-color: #8a67ab; color: #fff;"
+                        type="submit"
+                        th:disabled="${yaCerro}">Enviar</button>
             </div>
         </form>
     </div>

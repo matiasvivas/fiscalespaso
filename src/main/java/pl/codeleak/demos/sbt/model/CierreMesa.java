@@ -6,33 +6,38 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
+@Table(name = "cierre_mesa")
 public class CierreMesa {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @Column(columnDefinition = "LONGTEXT")
+    @Column(columnDefinition = "TEXT")
     private String fotoBase64;
+    @Enumerated(EnumType.STRING)
     private Distritos distrito;
     private Integer numeroCircuito;
     private Integer numeroSeccion;
 
+    private Integer numeroMesa;
     private Integer cantidadVotosLibertadAvanza;
     private String username;
-
+    @Temporal(TemporalType.TIMESTAMP)
     private Date fechaHoraCierre;
     public CierreMesa() {
     }
 
-    public CierreMesa(Integer id, String fotoBase64, Distritos distrito, Integer numeroCircuito, Integer numeroSeccion, Integer cantidadVotosLibertadAvanza, String username, Date fechaHoraCierre) {
+    public CierreMesa(Integer id, String fotoBase64, Distritos distrito, Integer numeroCircuito, Integer numeroSeccion, Integer numeroMesa, Integer cantidadVotosLibertadAvanza, String username, Date fechaHoraCierre) {
         this.id = id;
         this.fotoBase64 = fotoBase64;
         this.distrito = distrito;
         this.numeroCircuito = numeroCircuito;
         this.numeroSeccion = numeroSeccion;
+        this.numeroMesa = numeroMesa;
         this.cantidadVotosLibertadAvanza = cantidadVotosLibertadAvanza;
         this.username = username;
         this.fechaHoraCierre = fechaHoraCierre;
     }
+
     public Integer getId() {
         return id;
     }
@@ -71,6 +76,14 @@ public class CierreMesa {
 
     public void setNumeroSeccion(Integer numeroSeccion) {
         this.numeroSeccion = numeroSeccion;
+    }
+
+    public Integer getNumeroMesa() {
+        return numeroMesa;
+    }
+
+    public void setNumeroMesa(Integer numeroMesa) {
+        this.numeroMesa = numeroMesa;
     }
 
     public Integer getCantidadVotosLibertadAvanza() {

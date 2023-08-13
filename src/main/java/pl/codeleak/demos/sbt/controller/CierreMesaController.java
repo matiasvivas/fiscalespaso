@@ -16,7 +16,7 @@ import pl.codeleak.demos.sbt.enumeradores.Distritos;
 import pl.codeleak.demos.sbt.model.CierreMesa;
 import pl.codeleak.demos.sbt.model.Role;
 import pl.codeleak.demos.sbt.model.User;
-import pl.codeleak.demos.sbt.repository.CodigosRepository;
+import pl.codeleak.demos.sbt.repository.CierreMesaRepository;
 import pl.codeleak.demos.sbt.service.UserService;
 
 import java.io.IOException;
@@ -30,7 +30,7 @@ public class CierreMesaController {
     @Autowired
     UserService userService;
     @Autowired
-    CodigosRepository codigosRepository;
+    CierreMesaRepository cierreMesaRepository;
     @GetMapping(value = "/")
     public ModelAndView cargadorInicial(Model model) {
 
@@ -65,14 +65,20 @@ public class CierreMesaController {
         }
         model.addAttribute("role", role);
 
+        //Permite solo un cierre de mesa
+        if(cierreMesaRepository.obtenerMisCierresCargados(user.getUserName())!=null
+        && !cierreMesaRepository.obtenerMisCierresCargados(user.getUserName()).isEmpty()){
+            model.addAttribute("yaCerro", true);
+        }
+        else{
+            model.addAttribute("yaCerro", false);
+        }
+
         return "cierremesa/agregar";
     }
 
     @GetMapping(value = "/mostrar")
     public String mostrar(Model model) {
-        model.addAttribute("cierremesas", codigosRepository.findAll());
-        model.addAttribute("distritos", Distritos.values());
-
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
         model.addAttribute("userName", user.getName() + " " + user.getLastName());
@@ -82,6 +88,9 @@ public class CierreMesaController {
             role = roleT.getRole();
         }
         model.addAttribute("role", role);
+
+        model.addAttribute("cierremesas", cierreMesaRepository.obtenerMisCierresCargados(user.getUserName()));
+        model.addAttribute("distritos", Distritos.values());
 
         return "fiscal/ver";
     }
@@ -117,7 +126,7 @@ public class CierreMesaController {
             }
         }
 
-        codigosRepository.save(cierremesa);
+        cierreMesaRepository.save(cierremesa);
         redirectAttrs
             .addFlashAttribute("mensaje", "Agregado correctamente")
             .addFlashAttribute("clase", "success");
