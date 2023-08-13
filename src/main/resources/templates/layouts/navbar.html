@@ -10,17 +10,20 @@
     <div class="collapse navbar-collapse" id="menu">
 
         <ul class="navbar-nav mr-auto">
-            <li class="dropdown" th:if="${role == 'FISCAL'}">
+            <li class="dropdown" th:if="${role == 'FISCAL' || role == 'VISOR'}">
                 <a class="nav-link" style="color: white;" th:href="@{/cierremesa/}">Cerrar mesa</a>
             </li>
-            <li class="dropdown" th:if="${role == 'FISCAL'}">
+            <li class="dropdown" th:if="${role == 'FISCAL' || role == 'VISOR'}">
                 <a class="nav-link" style="color: white;" th:href="@{/cierremesa/mostrar}">Mi carga</a>
             </li>
-            <li class="dropdown" th:if="${role == 'FISCAL'}">
+            <li class="dropdown" th:if="${role == 'FISCAL' || role == 'VISOR'}">
                 <a class="nav-link" style="color: white;" th:href="@{/boletavalida/}">Boleta</a>
             </li>
-            <li class="dropdown" th:if="${role == 'FISCAL'}">
+            <li class="dropdown" th:if="${role == 'FISCAL' || role == 'VISOR'}">
                 <a class="nav-link" style="color: white;" th:href="@{/ayudacierre/}">Sugerencias</a>
+            </li>
+            <li class="dropdown" th:if="${role == 'FISCAL'}">
+                <a class="nav-link" style="color: white;" th:href="@{/votos/}">Votos en tiempo real</a>
             </li>
         </ul>
     </div>
