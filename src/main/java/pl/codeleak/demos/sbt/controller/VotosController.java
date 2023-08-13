@@ -60,7 +60,7 @@ public class VotosController {
         }
         votos.setPorcentajeJoven(porcentajeJoven);
         votos.setPositivos(votosPositivos);
-        votos.setPorcentajeNacional(votantesNacional);
+        votos.setPorcentajeNacional(porcentajeNacional);
         model.addAttribute("votos",votos);
         modelAndView.setViewName("visor/votos");
         return modelAndView;
