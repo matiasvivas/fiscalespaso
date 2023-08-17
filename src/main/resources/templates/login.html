@@ -55,9 +55,50 @@
             margin-top: 20px;
         }
 
+        #logo-container2 {
+            max-width: 100%;
+            animation: fadeIn 5s ease-out forwards;
+        }
         #logo-container {
             max-width: 100%;
+            animation: fadeIn 7s ease-out forwards;
         }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+
+
+        .animate-from-bottom {
+            opacity: 0; /* Comienza con opacidad 0 para que esté oculto al principio */
+            animation: fadeInFromBottom 3s ease-out forwards, slideFromBottom 1s ease-out forwards; /* Aplica ambas animaciones */
+        }
+
+        @keyframes fadeInFromBottom {
+            from {
+                opacity: 0; /* Comienza con opacidad 0 */
+                transform: translateY(20px); /* Comienza 20px debajo */
+            }
+            to {
+                opacity: 1; /* Termina con opacidad completa */
+                transform: translateY(0); /* Termina en la posición normal */
+            }
+        }
+
+        @keyframes slideFromBottom {
+            from {
+                transform: translateY(50px); /* Comienza 10px más abajo */
+            }
+            to {
+                transform: translateY(0); /* Termina en la posición normal */
+            }
+        }
+
     </style>
 </head>
 
@@ -66,14 +107,13 @@
     <div class="row">
         <div class="col-xs-12 col-sm-8 col-sm-offset-2 text-center">
             <br>
-            <br>
-            <h2>Fiscales PASO 2023</h2>
-            <br>
-            <br>
+            <div id="logo-container2">
+                <img th:src="@{/images/login2.png}" class="img-responsive center-block" alt="Logo" />
+            </div>
             <div id="logo-container">
                 <img th:src="@{/images/login.png}" class="img-responsive center-block" alt="Logo" />
             </div>
-            <form th:action="@{/login}" method="POST" class="form-signin">
+            <form th:action="@{/login}" method="POST" class="form-signin animate-from-bottom">
                 <h3 class="form-signin-heading" th:text="Bienvenidos"></h3>
                 <br />
 
@@ -94,12 +134,12 @@
             <br>
             <form th:action="@{/registration}" method="get">
                 <!-- Aplicando clases de color a los botones -->
-                <button class="btn btn-md btn-registrarme btn-block" type="Submit">Registrarme APP</button>
+                <button class="btn btn-md btn-registrarme btn-block animate-from-bottom" type="Submit">Registrarme APP</button>
             </form>
 
             <br>
             <div>
-                <a class="btn btn-md btn-registrarme btn-block" href="https://www.padron.gob.ar/">¿Dónde voto?</a>
+                <a class="btn btn-md btn-registrarme btn-block animate-from-bottom" href="https://www.padron.gob.ar/">¿Dónde voto?</a>
             </div>
 
         </div>
