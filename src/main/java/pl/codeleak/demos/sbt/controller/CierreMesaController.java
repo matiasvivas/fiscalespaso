@@ -22,6 +22,7 @@ import pl.codeleak.demos.sbt.service.UserService;
 import java.io.IOException;
 import java.util.Base64;
 import java.util.Date;
+import java.util.List;
 
 @Controller
 @RequestMapping(path = "/cierremesa")
@@ -71,7 +72,7 @@ public class CierreMesaController {
 
     @GetMapping(value = "/mostrar")
     public String mostrar(Model model) {
-        model.addAttribute("cierremesas", codigosRepository.findAll());
+        model.addAttribute("cierremesas", new CierreMesa());
         model.addAttribute("distritos", Distritos.values());
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -83,6 +84,11 @@ public class CierreMesaController {
             role = roleT.getRole();
         }
         model.addAttribute("role", role);
+
+        List<CierreMesa> cm = codigosRepository.obtenerMisCierresCargados(user.getUserName());
+        if(cm!=null){
+            model.addAttribute("cierremesas", cm);
+        }
 
         return "fiscal/ver";
     }
@@ -119,13 +125,25 @@ public class CierreMesaController {
         }
 
         try {
-            codigosRepository.save(cierremesa);
+            List<CierreMesa> cm = codigosRepository.validarQueNoSeRepitaElCierreDeMesa(user.getUserName(), cierremesa.getDistrito(), cierremesa.getNumeroCircuito(), cierremesa.getNumeroSeccion(), cierremesa.getNumeroMesa());
+            if(cm==null||cm.isEmpty()){
+                codigosRepository.save(cierremesa);
+            }else{
+                redirectAttrs
+                        .addFlashAttribute("mensaje", "Ya habias cerrado esta mesa.")
+                        .addFlashAttribute("clase", "warning");
+                return "redirect:/cierremesa/mostrar";
+            }
         }
         catch(Exception e){
             e.printStackTrace();
+            redirectAttrs
+                    .addFlashAttribute("mensaje", "Error al cerrar mesa.")
+                    .addFlashAttribute("clase", "warning");
+            return "redirect:/cierremesa/mostrar";
         }
         redirectAttrs
-            .addFlashAttribute("mensaje", "Agregado correctamente")
+            .addFlashAttribute("mensaje", "Cerrada correctamente")
             .addFlashAttribute("clase", "success");
         return "redirect:/cierremesa/mostrar";
     }
