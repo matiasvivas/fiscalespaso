@@ -44,7 +44,7 @@
     <div class="container">
         <div class="row">
             <div class="col-12">
-                <h2>EJEMPLO DE BOLETA VÁLIDA</h2>
+                <h2>Mis Cargas</h2>
                 <div th:classappend="'alert-' + (${clase != null} ? ${clase} : info)" th:if="${mensaje != null}"
                      th:text="${mensaje}"
                      class="alert">
@@ -53,40 +53,27 @@
                     <table class="table table-bordered">
                         <thead>
                         <tr>
-                            <th>Observá</th>
-                            <th>Detallá</th>
-                            <th>Comprobá</th>
+                            <th>Dist</th>
+                            <th>Circ</th>
+                            <th>Secc</th>
+                            <th>Mesa</th>
+                            <th>Votos P</th>
+                            <th>Imagen</th>
                         </tr>
                         </thead>
                         <tbody>
-                        <tr>
-                            <td>LISTA 135A</td>
-                            <td>Arriba del lado izquierdo</td>
-                            <td><span style="color: green; font-size: 18px;"> &#10004;</span></td>
-                            <!--<td><span style="color: red; font-size: 18px;"> &#10008;</span></td>-->
-                        </tr>
-                        <tr>
-                            <td>CARGO</td>
-                            <td>Debe decir Candidatos a ...</td>
-                            <td><span style="color: green; font-size: 18px;"> &#10004;</span></td>
-                        </tr>
-                        <tr>
-                            <td>COLOR</td>
-                            <td>El color puede variar sutilmente debido a la impresión.</td>
-                            <td><span style="color: green; font-size: 18px;"> &#10004;</span></td>                        </tr>
-                        <tr>
-                            <td>FOTO</td>
-                            <td>Javier Milei y Victoria Villarruel</td>
-                            <td><span style="color: green; font-size: 18px;"> &#10004;</span></td>
+                        <tr th:each="cierremesa : ${cierremesas}">
+                            <td th:text="${cierremesa.distrito}"></td>
+                            <td th:text="${cierremesa.numeroCircuito}"></td>
+                            <td th:text="${cierremesa.numeroSeccion}"></td>
+                            <td th:text="${cierremesa.numeroMesa}"></td>
+                            <td th:text="${cierremesa.cantidadVotosLibertadAvanza}"></td>
+                            <td th:if="${cierremesa.fotoBase64 != null}"><span style="color: green; font-size: 18px;"> &#10004;</span></td>
+                            <td th:if="${cierremesa.fotoBase64 == null}"><span style="color: red; font-size: 18px;"> &#10008;</span></td>
                         </tr>
                         </tbody>
                     </table>
                 </div>
-
-                <!--<div id="boleta-container">
-                    <img th:src="@{/images/boleta.png}" class="img-responsive center-block" alt="Logo" />
-                </div>-->
-
             </div>
         </div>
     </div>
